@@ -50,6 +50,9 @@ public class Prestamo {
         return "Prestamo{" + "codigoLibro=" + codigoLibro + ", numeroSocio=" + numeroSocio + ", fecha="
                 + this.getFechaFormateada() + '}';
     }
+    public String prestamoPorLista(){
+        return this.getCodigoLibro()+";"+this.getNumeroSocio()+";"+ this.getFechaFormateada();
+    }
 
     public boolean isDevuelto() {
         // TODO Auto-generated method stub

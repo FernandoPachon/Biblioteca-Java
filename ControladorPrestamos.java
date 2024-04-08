@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -144,10 +145,44 @@ public class ControladorPrestamos {
     }
     private static void eliminarPrestamo(Prestamo prestamo) {
         // Eliminar el préstamo de la lista de préstamos
-        ArrayList<Prestamo> prestamos = obtener();
+       /*  ArrayList<Prestamo> prestamos = obtener();
         prestamos.remove(prestamo);
-        guardarPrestamos(prestamos);
+        guardarPrestamos(prestamos); */
+        ArrayList<Prestamo> prestamos = new ArrayList<>();
+        FileReader fileReader = null;
+        BufferedReader bufferedReader = null;
+        try {
+            ControladorLibros.marcarComoDevuelto(prestamo.getCodigoLibro());
+            fileReader = new FileReader(NOMBRE_ARCHIVO);
+            bufferedReader = new BufferedReader(fileReader);
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("prestamos_temp.tmp", true));
+            BufferedWriter bufferedWriterr = new BufferedWriter(bufferedWriter);
+            String linea;
+            
+            while ((linea = bufferedReader.readLine()) != null) {
+                System.out.println(linea);
+               // linea=linea.replace("500;1;2024-04-07 18:50:48","0");
+               // String lineaActualizar="1;1;2024-04-08 00:27:43";
+                System.out.println(prestamo.prestamoPorLista());
+                if (linea.equals(prestamo.prestamoPorLista())) {
+                    bufferedWriterr.write("");
+                } else {
+                    bufferedWriterr.write(linea); 
+                }
+                //linea = bufferedReader.readLine();
+            }
+            bufferedReader.close();
+            bufferedWriterr.close();
+            File archivoOriginal = new File(NOMBRE_ARCHIVO);
+            File archivoTemporal = new File("prestamos_temp.tmp");
+            archivoOriginal.delete();
+            archivoTemporal.renameTo(archivoOriginal);
 
+            System.out.println("El archivo se ha actualizado correctamente.");
+
+        } catch (IOException e) {
+            System.out.println("Error al leer/escribir el archivo: " + e.getMessage());
+        }
         // Mostrar mensaje de confirmación
         JOptionPane.showMessageDialog(null, "Préstamo eliminado correctamente", "Éxito",
                 JOptionPane.INFORMATION_MESSAGE);
@@ -158,7 +193,7 @@ public class ControladorPrestamos {
             for (Prestamo prestamo : prestamos) {
                 writer.write(prestamo.getCodigoLibro() + SEPARADOR_CAMPO + prestamo.getNumeroSocio() + SEPARADOR_CAMPO
                         + prestamo.getFechaFormateada() + SEPARADOR_REGISTRO);
-                writer.newLine();
+               // writer.newLine();
             }
         } catch (IOException e) {
             System.out.println("Error escribiendo en archivo: " + e.getMessage());
@@ -188,7 +223,7 @@ public class ControladorPrestamos {
             for (Prestamo prestamo : prestamos) {
                 writer.write(prestamo.getCodigoLibro() + SEPARADOR_CAMPO + prestamo.getNumeroSocio() + SEPARADOR_CAMPO
                         + prestamo.getFechaFormateada() + SEPARADOR_REGISTRO);
-                writer.newLine();
+                //writer.newLine();
             }
         } catch (IOException e) {
             System.out.println("Error escribiendo en archivo: " + e.getMessage());

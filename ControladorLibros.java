@@ -140,6 +140,15 @@ public class ControladorLibros {
         libros.get(indice).setDisponible(false);
         ControladorLibros.guardarLibros(libros);
     }
+    public static void marcarComoDevuelto(String codigoLibro) {
+        ArrayList<Libro> libros = ControladorLibros.obtener();
+        int indice = ControladorLibros.buscarPorCodigo(codigoLibro, libros);
+        if (indice == -1) {
+            return;
+        }
+        libros.get(indice).setDisponible(true);
+        ControladorLibros.guardarLibros(libros);
+    }
 
     public static void cambiarSignatura(String codigoLibro,String nuevoTitulo,String nuevoAutor,String nuevaLocalizacion, String nuevaSignatura) {
         ArrayList<Libro> libros = ControladorLibros.obtener();
