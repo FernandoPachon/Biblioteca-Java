@@ -51,4 +51,9 @@ public class Prestamo {
                 + this.getFechaFormateada() + '}';
     }
 
+    public boolean isDevuelto() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isDevuelto'");
+    }
+
 }

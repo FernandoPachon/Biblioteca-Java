@@ -150,7 +150,7 @@ public class Biblioteca {
     private static void gestionPrestamos() {
         String eleccionPrestamos = "";
         while (!eleccionPrestamos.equals("Volver al menú principal")) {
-            Object[] options = {"Registrar préstamo", "Ver préstamos", "Editar préstamo", "Volver al menú principal"};
+            Object[] options = {"Registrar préstamo", "Ver préstamos", "Devolución préstamo", "Volver al menú principal"};
             int result = JOptionPane.showOptionDialog(
                     null,
                     "Elige una opción para la gestión de préstamos:",

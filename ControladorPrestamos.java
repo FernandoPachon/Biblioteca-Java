@@ -10,6 +10,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author Fernando Pachón
@@ -80,14 +81,16 @@ public class ControladorPrestamos {
         message.append("+-----+------------------------------+------------------------------+--------------------+\n");
         message.append(String.format("|%-5s|%-30s|%-30s|%-20s|\n", "No", "Codigo libro", "No. Socio", "Fecha"));
         message.append("+-----+------------------------------+------------------------------+--------------------+\n");
-    
+
         for (int x = 0; x < prestamos.size(); x++) {
             Prestamo prestamo = prestamos.get(x);
-            message.append(String.format("|%-5d|%-30s|%-30s|%-20s|\n", x, prestamo.getCodigoLibro(), prestamo.getNumeroSocio(),
-                    prestamo.getFechaFormateada()));
-            message.append("+-----+------------------------------+------------------------------+--------------------+\n");
+            message.append(
+                    String.format("|%-5d|%-30s|%-30s|%-20s|\n", x, prestamo.getCodigoLibro(), prestamo.getNumeroSocio(),
+                            prestamo.getFechaFormateada()));
+            message.append(
+                    "+-----+------------------------------+------------------------------+--------------------+\n");
         }
-    
+
         JOptionPane.showMessageDialog(null, message.toString(), "Listado de Préstamos", JOptionPane.PLAIN_MESSAGE);
     }
 
@@ -97,12 +100,13 @@ public class ControladorPrestamos {
         ControladorPrestamos.registrar(new Prestamo(libro.getCodigo(), socio.getNumero(), LocalDateTime.now()));
         System.out.println("Prestamo registrado correctamente");
     }
+
     public static void editarPrestamo() {
         ArrayList<Prestamo> prestamos = obtener();
         Prestamo prestamoSeleccionado = seleccionarPrestamo(prestamos);
         if (prestamoSeleccionado != null) {
-            // Mostrar opciones para editar el préstamo seleccionado
-            String[] opcionesEditar = {"Editar fecha del préstamo", "Cancelar"};
+            // Mostrar opciones para editar o eliminar el préstamo seleccionado
+            String[] opcionesEditar = { "Editar fecha del préstamo", "Eliminar préstamo", "Cancelar" };
             int opcionEditar = JOptionPane.showOptionDialog(
                     null,
                     "Selecciona una opción para editar el préstamo:",
@@ -111,13 +115,25 @@ public class ControladorPrestamos {
                     JOptionPane.PLAIN_MESSAGE,
                     null,
                     opcionesEditar,
-                    opcionesEditar[0]
-            );
+                    opcionesEditar[0]);
             switch (opcionEditar) {
                 case 0:
                     editarFechaPrestamo(prestamoSeleccionado);
                     break;
                 case 1:
+                    // Eliminar el préstamo
+                    int confirmacion = JOptionPane.showConfirmDialog(
+                            null,
+                            "¿Estás seguro de que deseas eliminar el préstamo?",
+                            "Eliminar Préstamo",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+                    if (confirmacion == JOptionPane.YES_OPTION) {
+                        eliminarPrestamo(prestamoSeleccionado);
+                        JOptionPane.showMessageDialog(null, "Préstamo eliminado correctamente", "Éxito",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                case 2:
                     // Cancelar la edición
                     break;
                 default:
@@ -126,26 +142,52 @@ public class ControladorPrestamos {
             }
         }
     }
-    
+    private static void eliminarPrestamo(Prestamo prestamo) {
+        // Eliminar el préstamo de la lista de préstamos
+        ArrayList<Prestamo> prestamos = obtener();
+        prestamos.remove(prestamo);
+        guardarPrestamos(prestamos);
+
+        // Mostrar mensaje de confirmación
+        JOptionPane.showMessageDialog(null, "Préstamo eliminado correctamente", "Éxito",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private static void guardarPrestamos(ArrayList<Prestamo> prestamos) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(NOMBRE_ARCHIVO))) {
+            for (Prestamo prestamo : prestamos) {
+                writer.write(prestamo.getCodigoLibro() + SEPARADOR_CAMPO + prestamo.getNumeroSocio() + SEPARADOR_CAMPO
+                        + prestamo.getFechaFormateada() + SEPARADOR_REGISTRO);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error escribiendo en archivo: " + e.getMessage());
+        }
+    }
+
     private static void editarFechaPrestamo(Prestamo prestamo) {
-        String nuevaFechaStr = JOptionPane.showInputDialog(null, "Ingrese la nueva fecha del préstamo (yyyy-MM-dd HH:mm:ss):");
+        String nuevaFechaStr = JOptionPane.showInputDialog(null,
+                "Ingrese la nueva fecha del préstamo (yyyy-MM-dd HH:mm:ss):");
         if (nuevaFechaStr != null && !nuevaFechaStr.isEmpty()) {
             try {
-                LocalDateTime nuevaFecha = LocalDateTime.parse(nuevaFechaStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                LocalDateTime nuevaFecha = LocalDateTime.parse(nuevaFechaStr,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 prestamo.setFecha(nuevaFecha);
                 guardarPrestamos();
-                JOptionPane.showMessageDialog(null, "Fecha del préstamo actualizada correctamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Fecha del préstamo actualizada correctamente", "Éxito",
+                        JOptionPane.INFORMATION_MESSAGE);
             } catch (DateTimeParseException e) {
                 JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
-    
+
     private static void guardarPrestamos() {
         ArrayList<Prestamo> prestamos = obtener();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(NOMBRE_ARCHIVO))) {
             for (Prestamo prestamo : prestamos) {
-                writer.write(prestamo.getCodigoLibro() + SEPARADOR_CAMPO + prestamo.getNumeroSocio() + SEPARADOR_CAMPO + prestamo.getFechaFormateada() + SEPARADOR_REGISTRO);
+                writer.write(prestamo.getCodigoLibro() + SEPARADOR_CAMPO + prestamo.getNumeroSocio() + SEPARADOR_CAMPO
+                        + prestamo.getFechaFormateada() + SEPARADOR_REGISTRO);
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -162,8 +204,7 @@ public class ControladorPrestamos {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 arrayPrestamos,
-                arrayPrestamos[0]
-        );
+                arrayPrestamos[0]);
         return prestamoSeleccionado;
     }
 }

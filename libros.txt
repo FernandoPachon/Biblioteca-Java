@@ -1,5 +1,6 @@
 1;El coronel no tiene quien le escribe;Gabriel Garcia Marquez;true;null;Drama
 2;100 años de soledad;Gabriel Garcia Marquez;false;null;Drama
 1012;Condenados al silencio;Robert Wilson;false;null;Policial
-500;500 Dias con ella;jhosep gordon;true;null;romance
+500;500 Dias con ella;jhosep gordon;false;null;romance
+null;null;null;false;null;null
 null;null;null;false;null;null

@@ -258,4 +258,7 @@ public static Libro imprimirLibrosYPedirSeleccion() {
     }
     return null;
 }
+public static void marcarComoDisponible(String codigoLibro) {
+    throw new UnsupportedOperationException("Unimplemented method 'marcarComoDisponible'");
+}
 } 
